@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculus III Gradebook</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        .instructions {
+            background: #f8f9fa;
+            padding: 20px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .instructions h2 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .instructions ul {
+            padding-left: 20px;
+            margin: 10px 0;
+        }
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        .grade-content {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 20px;
+        }
+        .categories {
+            flex: 1;
+            min-width: 300px;
+            padding: 15px;
+        }
+        .category {
+            margin-bottom: 25px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+        .category h3 {
+            color: #2c3e50;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #6a11cb;
+            margin-bottom: 15px;
+        }
+        .assignment {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 8px 5px;
+            border-bottom: 1px dashed #dee2e6;
+        }
+        .assignment:last-child {
+            border-bottom: none;
+        }
+        input[type="number"] {
+            width: 80px;
+            padding: 8px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .results {
+            flex: 1;
+            min-width: 300px;
+            padding: 15px;
+            background: #eef5ff;
+            border-radius: 10px;
+        }
+        .results h2 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #6a11cb;
+        }
+        .grade-summary {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+        .grade-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .final-grade {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .final-grade h3 {
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+        }
+        .grade-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #6a11cb;
+        }
+        .save-section {
+            padding: 20px;
+            text-align: center;
+            background: #f8f9fa;
+            border-top: 1px solid #dee2e6;
+        }
+        .btn {
+            background: #6a11cb;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+        }
+        .btn:hover {
+            background: #2575fc;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        @media (max-width: 768px) {
+            .grade-content {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Calculus III Gradebook</h1>
+            <p class="subtitle">Track your semester grades with this interactive calculator</p>
+        </header>
+        
+        <div class="instructions">
+            <h2>How to Use This Gradebook</h2>
+            <ul>
+                <li>Enter your scores for each assignment in the input fields</li>
+                <li>The grade will automatically calculate as you enter scores</li>
+                <li>Final exam score can be left blank until you have it</li>
+                <li>Your current grade (without final) and final grade (with final) will be displayed</li>
+                <li>Use the save button to download your gradebook as a text file</li>
+            </ul>
+        </div>
+        
+        <div class="grade-content">
+            <div class="categories">
+                <div class="category">
+                    <h3>Quizzes (35%)</h3>
+                    <div class="assignment">
+                        <span>Quiz 1</span>
+                        <input type="number" min="0" max="100" class="quiz-score" onchange="calculateGrade()">
+                    </div>
+                    <div class="assignment">
+                        <span>Quiz 2</span>
+                        <input type="number" min="0" max="100" class="quiz-score" onchange="calculateGrade()">
+                    </div>
+                    <div class="assignment">
+                        <span>Quiz 3</span>
+                        <input type="number" min="0" max="100" class="quiz-score" onchange="calculateGrade()">
+                    </div>
+                    <div class="assignment">
+                        <span>Quiz 4</span>
+                        <input type="number" min="0" max="100" class="quiz-score" onchange="calculateGrade()">
+                    </div>
+                    <div class="assignment">
+                        <span>Quiz 5</span>
+                        <input type="number" min="0" max="100" class="quiz-score" onchange="calculateGrade()">
+                    </div>
+                    <div class="assignment">
+                        <span>Quiz 6</span>
+                        <input type="number" min="0" max="100" class="quiz-score" onchange="calculateGrade()">
+                    </div>
+                    <div class="assignment">
+                        <span>Quiz 7</span>
+                        <input type="number" min="0" max="100" class="quiz-score" onchange="calculateGrade()">
+                    </div>
+                </div>
+                
+                <div class="category">
+                    <h3>Test/Final Exam (20%)</h3>
+                    <div class="assignment">
+                        <span>Final Exam</span>
+                        <input type="number" min="0" max="100" id="final-exam" onchange="calculateGrade()">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="categories">
+                <div class="category">
+                    <h3>Literacy Homework (20%)</h3>
+                    <div class="assignment">
+                        <span>Literacy 1</span>
+                        <input type="number" min="0" max="100" class="literacy-score" onchange="calculateGrade()">
+                    </div>
+                    <div class="assignment">
+                        <span>Literacy 2</span>
+                        <input type="number" min="0" max="100" class="literacy-score" onchange="calculateGrade()">
+                    </div>
+                    <div class="assignment">
+                        <span>Literacy 3</span>
+                        <input type="number" min="0" max="100" class="literacy-score" onchange="calculateGrade()">
+                    </div>
+                    <div class="assignment">
+                        <span>Literacy 4</span>
+                        <input type="number" min="0" max="100" class="literacy-score" onchange="calculateGrade()">
+                    </div>
+                    <div class="assignment">
+                        <span>Literacy 5</span>
+                        <input type="number" min="0" max="100" class="literacy-score" onchange="calculateGrade()">
+                    </div>
+                    <div class="assignment">
+                        <span>Literacy 6</span>
+                        <input type="number" min="0" max="100" class="literacy-score" onchange="calculateGrade()">
+                    </div>
+                    <div class="assignment">
+                        <span>Literacy 7</span>
+                        <input type="number" min="0" max="100" class="literacy-score" onchange="calculateGrade()">
+                    </div>
+                </div>
+                
+                <div class="category">
+                    <h3>Try Its (25%)</h3>
+                    <div class="assignment">
+                        <span>Try It 1</span>
+                        <input type="number" min="0" max="100" class="tryit-score" onchange="calculateGrade()">
+                    </div>
+                    <div class="assignment">
+                        <span>Try It 2</span>
+                        <input type="number" min="0" max="100" class="tryit-score" onchange="calculateGrade()">
+                    </div>
+                    <div class="assignment">
+                        <span>Try It 3</span>
+                        <input type="number" min="0" max="100" class="tryit-score" onchange="calculateGrade()">
+                    </div>
+                    <div class="assignment">
+                        <span>Try It 4</span>
+                        <input type="number" min="0" max="100" class="tryit-score" onchange="calculateGrade()">
+                    </div>
+                    <div class="assignment">
+                        <span>Try It 5</span>
+                        <input type="number" min="0" max="100" class="tryit-score" onchange="calculateGrade()">
+                    </div>
+                    <div class="assignment">
+                        <span>Try It 6</span>
+                        <input type="number" min="0" max="100" class="tryit-score" onchange="calculateGrade()">
+                    </div>
+                    <div class="assignment">
+                        <span>Try It 7</span>
+                        <input type="number" min="0" max="100" class="tryit-score" onchange="calculateGrade()">
+                    </div>
+                    <div class="assignment">
+                        <span>Try It 8</span>
+                        <input type="number" min="0" max="100" class="tryit-score" onchange="calculateGrade()">
+                    </div>
+                    <div class="assignment">
+                        <span>Try It 9</span>
+                        <input type="number" min="0" max="100" class="tryit-score" onchange="calculateGrade()">
+                    </div>
+                    <div class="assignment">
+                        <span>Try It 10</span>
+                        <input type="number" min="0" max="100" class="tryit-score" onchange="calculateGrade()">
+                    </div>
+                    <div class="assignment">
+                        <span>Try It 11</span>
+                        <input type="number" min="0" max="100" class="tryit-score" onchange="calculateGrade()">
+                    </div>
+                    <div class="assignment">
+                        <span>Try It 12</span>
+                        <input type="number" min="0" max="100" class="tryit-score" onchange="calculateGrade()">
+                    </div>
+                    <div class="assignment">
+                        <span>Try It 13</span>
+                        <input type="number" min="0" max="100" class="tryit-score" onchange="calculateGrade()">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="results">
+                <h2>Grade Summary</h2>
+                <div class="grade-summary">
+                    <div class="grade-item">
+                        <span>Quizzes Average:</span>
+                        <strong><span id="quiz-average">0</span>%</strong>
+                    </div>
+                    <div class="grade-item">
+                        <span>Weighted Quizzes (35%):</span>
+                        <strong><span id="quiz-weighted">0</span></strong>
+                    </div>
+                    
+                    <div class="grade-item">
+                        <span>Final Exam:</span>
+                        <strong><span id="final-exam-display">Not entered</span></strong>
+                    </div>
+                    <div class="grade-item">
+                        <span>Weighted Final (20%):</span>
+                        <strong><span id="final-weighted">0</span></strong>
+                    </div>
+                    
+                    <div class="grade-item">
+                        <span>Literacy Homework Average:</span>
+                        <strong><span id="literacy-average">0</span>%</strong>
+                    </div>
+                    <div class="grade-item">
+                        <span>Weighted Literacy (20%):</span>
+                        <strong><span id="literacy-weighted">0</span></strong>
+                    </div>
+                    
+                    <div class="grade-item">
+                        <span>Try Its Average:</span>
+                        <strong><span id="tryit-average">0</span>%</strong>
+                    </div>
+                    <div class="grade-item">
+                        <span>Weighted Try Its (25%):</span>
+                        <strong><span id="tryit-weighted">0</span></strong>
+                    </div>
+                </div>
+                
+                <div class="final-grade">
+                    <h3>Current Grade (without final)</h3>
+                    <div class="grade-value"><span id="current-grade">0.00</span>%</div>
+                </div>
+                
+                <div class="final-grade" style="margin-top: 20px; background: #6a11cb;">
+                    <h3>Final Grade (with exam)</h3>
+                    <div class="grade-value"><span id="final-grade">0.00</span>%</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="save-section">
+            <button class="btn" onclick="saveAsFile()">Save Gradebook as Text File</button>
+            <button class="btn" onclick="resetGradebook()">Reset All Scores</button>
+        </div>
+    </div>
+
+    <script>
+        function calculateGrade() {
+            // Calculate quiz average
+            const quizScores = document.querySelectorAll('.quiz-score');
+            let quizSum = 0;
+            let quizCount = 0;
+            
+            quizScores.forEach(input => {
+                if (input.value !== '') {
+                    quizSum += parseFloat(input.value);
+                    quizCount++;
+                }
+            });
+            
+            const quizAverage = quizCount > 0 ? quizSum / quizCount : 0;
+            const quizWeighted = quizAverage * 0.35;
+            
+            document.getElementById('quiz-average').textContent = quizAverage.toFixed(2);
+            document.getElementById('quiz-weighted').textContent = quizWeighted.toFixed(2);
+            
+            // Calculate final exam
+            const finalExamInput = document.getElementById('final-exam');
+            const finalExamScore = finalExamInput.value !== '' ? parseFloat(finalExamInput.value) : null;
+            const finalWeighted = finalExamScore !== null ? finalExamScore * 0.20 : 0;
+            
+            document.getElementById('final-exam-display').textContent = finalExamScore !== null ? finalExamScore + '%' : 'Not entered';
+            document.getElementById('final-weighted').textContent = finalWeighted.toFixed(2);
+            
+            // Calculate literacy homework average
+            const literacyScores = document.querySelectorAll('.literacy-score');
+            let literacySum = 0;
+            let literacyCount = 0;
+            
+            literacyScores.forEach(input => {
+                if (input.value !== '') {
+                    literacySum += parseFloat(input.value);
+                    literacyCount++;
+                }
+            });
+            
+            const literacyAverage = literacyCount > 0 ? literacySum / literacyCount : 0;
+            const literacyWeighted = literacyAverage * 0.20;
+            
+            document.getElementById('literacy-average').textContent = literacyAverage.toFixed(2);
+            document.getElementById('literacy-weighted').textContent = literacyWeighted.toFixed(2);
+            
+            // Calculate try its average
+            const tryitScores = document.querySelectorAll('.tryit-score');
+            let tryitSum = 0;
+            let tryitCount = 0;
+            
+            tryitScores.forEach(input => {
+                if (input.value !== '') {
+                    tryitSum += parseFloat(input.value);
+                    tryitCount++;
+                }
+            });
+            
+            const tryitAverage = tryitCount > 0 ? tryitSum / tryitCount : 0;
+            const tryitWeighted = tryitAverage * 0.25;
+            
+            document.getElementById('tryit-average').textContent = tryitAverage.toFixed(2);
+            document.getElementById('tryit-weighted').textContent = tryitWeighted.toFixed(2);
+            
+            // Calculate current grade (without final exam)
+            const currentTotalWeight = 0.35 + 0.20 + 0.25; // Quizzes, Literacy, Try Its
+            const currentGrade = (quizWeighted + literacyWeighted + tryitWeighted) / currentTotalWeight;
+            document.getElementById('current-grade').textContent = currentGrade.toFixed(2);
+            
+            // Calculate final grade (with final exam if available)
+            let finalGrade;
+            if (finalExamScore !== null) {
+                finalGrade = quizWeighted + finalWeighted + literacyWeighted + tryitWeighted;
+            } else {
+                finalGrade = currentGrade; // Show current grade if no final exam
+            }
+            document.getElementById('final-grade').textContent = finalGrade.toFixed(2);
+        }
+        
+        function saveAsFile() {
+            const quizScores = document.querySelectorAll('.quiz-score');
+            const finalExam = document.getElementById('final-exam').value;
+            const literacyScores = document.querySelectorAll('.literacy-score');
+            const tryitScores = document.querySelectorAll('.tryit-score');
+            
+            let content = "Calculus III Gradebook\n";
+            content += "======================\n\n";
+            
+            content += "QUIZZES (35%):\n";
+            quizScores.forEach((input, index) => {
+                content += `Quiz ${index+1}: ${input.value || 'Not entered'}\n`;
+            });
+            content += `\nQuizzes Average: ${document.getElementById('quiz-average').textContent}%\n\n`;
+            
+            content += "FINAL EXAM (20%):\n";
+            content += `Final Exam: ${finalExam || 'Not entered'}\n\n`;
+            
+            content += "LITERACY HOMEWORK (20%):\n";
+            literacyScores.forEach((input, index) => {
+                content += `Literacy ${index+1}: ${input.value || 'Not entered'}\n`;
+            });
+            content += `\nLiteracy Average: ${document.getElementById('literacy-average').textContent}%\n\n`;
+            
+            content += "TRY ITS (25%):\n";
+            tryitScores.forEach((input, index) => {
+                content += `Try It ${index+1}: ${input.value || 'Not entered'}\n`;
+            });
+            content += `\nTry Its Average: ${document.getElementById('tryit-average').textContent}%\n\n`;
+            
+            content += "GRADE SUMMARY:\n";
+            content += `Current Grade (without final): ${document.getElementById('current-grade').textContent}%\n`;
+            content += `Final Grade (with final): ${document.getElementById('final-grade').textContent}%\n`;
+            
+            const blob = new Blob([content], { type: 'text/plain' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'calc3_gradebook.txt';
+            a.click();
+        }
+        
+        function resetGradebook() {
+            if (confirm('Are you sure you want to reset all scores?')) {
+                const allInputs = document.querySelectorAll('input[type="number"]');
+                allInputs.forEach(input => {
+                    input.value = '';
+                });
+                calculateGrade();
+            }
+        }
+        
+        // Initialize the grade calculation
+        calculateGrade();
+    </script>
+</body>
+</html>
